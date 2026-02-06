@@ -1,87 +1,57 @@
 # Deploying HOLYKIDS Biometric Attendance to Netlify
 
+## ⚠️ CRITICAL: Environment Variables Required
+
+Your app is NOT working on phone because Supabase environment variables are not set in Netlify!
+
+**Current Status:** Staff are being saved to localStorage only (data won't persist across devices)
+
 ## Prerequisites
 
 1. **GitHub Account** - For storing your code
 2. **Netlify Account** - For hosting the app
-3. **Supabase Account** - For database (optional but recommended)
+3. **Supabase Account** - Already configured (project ID: mmluzuxcoqyrtenstkxq)
 
-## Step 1: Push Code to GitHub
+## Step 1: Configure Environment Variables in Netlify
 
-1. Create a new repository on GitHub
-2. Initialize git and push your code:
+### ⚠️ THIS IS THE MOST IMPORTANT STEP
 
-```bash
-cd c:/Users/User/TIME\ ATTENDANCE
-git init
-git add .
-git commit -m "Initial commit: HOLYKIDS Biometric Attendance System"
-git branch -M main
-git remote add origin https://github.com/YOUR_USERNAME/YOUR_REPO.git
-git push -u origin main
-```
+1. Go to [Netlify Dashboard](https://app.netlify.com)
+2. Select your site (e.g., `time-attendance-xxx`)
+3. Go to **Site settings** → **Environment variables**
+4. Add these exact values:
 
-## Step 2: Deploy to Netlify
+| Variable | Value |
+|----------|-------|
+| NEXT_PUBLIC_SUPABASE_URL | `https://mmluzuxcoqyrtenstkxq.supabase.co` |
+| NEXT_PUBLIC_SUPABASE_ANON_KEY | `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1tbHV6dXhjb3F5cnRlbnN0a3hxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk2Mjg3MTksImV4cCI6MjA4NTIwNDcxOX0.c8fGCzUxFNOW9s7Q-8JPwBEMsfQHflGex108fXXZpTc` |
+| SUPABASE_SERVICE_ROLE_KEY | `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1tbHV6dXhjb3F5cnRlbnN0a3hxIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2OTYyODcxOSwiZXhwIjoyMDg1MjA0NzE5fQ.QdOIYO18gIjfc6AGHxc-gXg0ShWbMT7fTJSsJ_sVtnk` |
+| NEXT_PUBLIC_APP_NAME | `HOLYKIDS Staff Attendance` |
+| NEXT_PUBLIC_ORGANIZATION_NAME | `HOLYKIDS School` |
+| NEXT_PUBLIC_APP_URL | `https://YOUR-SITE-NAME.netlify.app` |
+| NEXT_PUBLIC_REQUIRE_HTTPS | `true` |
 
-### Option A: Deploy from GitHub (Recommended)
+5. Click **Save**
+6. Go to **Deploys** → **Trigger deploy** → **Deploy site**
 
-1. Go to [Netlify](https://netlify.com) and sign up/login
-2. Click **"Add new site"** → **"Import an existing project"**
-3. Select **GitHub** and choose your repository
-4. Netlify will auto-detect the settings from `netlify.toml`
-5. Click **"Deploy site"**
+## Step 2: Verify Supabase Setup
 
-### Option B: Deploy by Drag & Drop
+1. Go to [Supabase Dashboard](https://app.netlify.com)
+2. Select project: `mmluzuxcoqyrtenstkxq`
+3. Go to **SQL Editor**
+4. Run the schema from `supabase/schema.sql` if not already done
 
-1. Build your project:
-   ```bash
-   npm run build
-   ```
-2. The output will be in `.next/` folder
-3. Go to Netlify → Drop your project folder
-
-## Step 3: Configure Environment Variables
-
-In Netlify Dashboard:
-
-1. Go to **Site settings** → **Environment variables**
-2. Add the following variables:
-
-```
-NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
-SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
-NEXT_PUBLIC_APP_NAME=HOLYKIDS Staff Attendance
-NEXT_PUBLIC_ORGANIZATION_NAME=HOLYKIDS School
-```
-
-## Step 4: Set Up Supabase (Optional but Recommended)
-
-### Create Supabase Project
-
-1. Go to [Supabase](https://supabase.com) and create a free account
-2. Click **"New project"** and fill in details
-3. Wait for the project to be ready
-
-### Run Database Setup
-
-1. Go to **SQL Editor** in Supabase Dashboard
-2. Copy and run the contents of `supabase/schema.sql`
-3. This creates the `staff` table and other required tables
-
-### Get API Keys
-
-1. Go to **Settings** → **API**
-2. Copy `Project URL` → `NEXT_PUBLIC_SUPABASE_URL`
-3. Copy `anon` key → `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-4. Copy `service_role` key → `SUPABASE_SERVICE_ROLE_KEY`
-
-## Step 5: Test Your Deployment
+## Step 3: Test Your Deployment
 
 1. Open your Netlify site URL
-2. Go to **Admin** → **Staff Management**
-3. Try adding a staff member
-4. Verify the staff is saved
+2. Go to `/test-connection`
+3. You should see:
+   - ✅ Supabase Connection: CONNECTED
+   - ✅ Database Tables: OK
+
+4. Go to **Admin** → **Staff Management**
+5. Add a staff member
+6. Verify it appears in Supabase Dashboard → **Table Editor** → **staff** table
 
 ## Features Working
 
@@ -97,8 +67,17 @@ NEXT_PUBLIC_ORGANIZATION_NAME=HOLYKIDS School
 
 ## Common Issues
 
-### Issue: API routes not working
-**Solution:** Make sure environment variables are set in Netlify
+### Issue: API routes not working / Staff not saving
+**Solution:** 
+- Make sure ALL environment variables are set in Netlify
+- Check `/test-connection` page for status
+- Trigger a new deploy after adding variables
+
+### Issue: Phone can't access the site
+**Solution:** 
+- Ensure HTTPS is enabled (Netlify provides this)
+- Check if site is deployed, not in draft mode
+- Verify your Netlify site URL is correct
 
 ### Issue: Biometric not working on mobile
 **Solution:** 
@@ -128,12 +107,18 @@ git push
 
 After successful deployment:
 
-1. **Test all features** - Check-in, check-out, reports
+1. **Test all features** - Check `/test-connection` page first!
 2. **Add staff members** - Register all HOLYKIDS staff
 3. **Setup biometric** - Enroll fingerprints for staff
 4. **Share with staff** - Provide login credentials
 
-## Support
+## Quick Checklist ✅
+
+- [ ] Environment variables set in Netlify
+- [ ] Triggered new deploy
+- [ ] `/test-connection` shows "CONNECTED"
+- [ ] Can add staff and see them in Supabase
+- [ ] Phone can access the public URL
 
 - **Netlify Docs:** https://docs.netlify.com
 - **Supabase Docs:** https://supabase.com/docs
